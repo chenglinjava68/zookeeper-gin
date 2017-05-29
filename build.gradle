@@ -1,0 +1,51 @@
+group 'com.gin.zookeeper'
+version '1.0.0-SNAPSHOT'
+def artifactId = "zookeeper-gin"
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+ext {
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile("com.alibaba:fastjson:1.2.20")
+    compile 'org.apache.commons:commons-collections4:4.0'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+
+    compile 'ch.qos.logback:logback-core:1.1.7'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.apache.curator:curator-framework:2.9.1'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+}
+
+// gradle install安装到.m2本地仓库
+install {
+    repositories.mavenInstaller {
+        pom.version = "$project.version"
+        pom.artifactId = "$artifactId"
+        pom.groupId = "$project.group"
+    }
+}
+
+// gradle upload上传Jar包到maven仓库
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://maven.wz-inc.com/content/repositories/snapshots/") {
+                authentication(userName: "Snapshot_Upload", password: "P@ssw0rd")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
+    }
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
